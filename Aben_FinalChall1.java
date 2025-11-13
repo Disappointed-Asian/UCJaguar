@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Aben_FinalChall1 {
-    public static void main(String[] args){
+   public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         //Array that stores the products
         String[] product = {
@@ -16,26 +16,18 @@ public class Aben_FinalChall1 {
             "PANCIT CANTON CHILIMANSI 80G",
             "VALLEY BREAD PULLMAN LOAF 500G"
         };
+        
         //Array that stores the prices of products
-        double[] price = {
-            22.0,
-            39.0,
-            182.0,
-            235.0,
-            10.0,
-            33.0,
-            38.0,
-            63.25,
-            14.0,
-            48.0
-        };
-
+        double[] price = new double[10];
+        
         //Array that will store the quantity
-        int[] numberOfItems = new int[10];
+        int[] quantity = new int[10];
+        
         //Array that will store the total value of the remaining products
         double[] totalValue = new double[10];
 
-        int quantity;
+        int currentQuantity;
+        double currentPrice;
 
         System.out.println("\t\tWELCOME TO STOCK MANAGER\n");
 
@@ -45,7 +37,7 @@ public class Aben_FinalChall1 {
 
             //Checks if user inputs a number
             try{
-            quantity = sc.nextInt();
+            currentQuantity = sc.nextInt();
             }
             catch(InputMismatchException e){
                 System.out.println("Please type a number.\n");
@@ -55,15 +47,36 @@ public class Aben_FinalChall1 {
             }
 
             //Checks if user input a number equal to or more than 0
-            if (quantity<0) {
+            if (currentQuantity<0) {
+                System.out.println("Please enter a valid number.\n");
+                i--;
+                continue;
+            }
+            
+            quantity[i] = currentQuantity;
+            
+            System.out.println("Enter price for: " + product[i]);
+            //Checks if user inputs a number
+            try{
+            currentPrice = sc.nextDouble();
+            }
+            catch(InputMismatchException e){
+                System.out.println("Please type a number.\n");
+                i--;
+                sc.next();
+                continue;
+            }
+
+            //Checks if user input a number equal to or more than 0
+            if (currentPrice<0) {
                 System.out.println("Please enter a valid number.\n");
                 i--;
                 continue;
             }
 
-            numberOfItems[i] = quantity;
+            price[i] = currentPrice;
             //Calculates the total value and stores them
-            totalValue[i] = quantity * price[i];
+            totalValue[i] = quantity[i] * price[i];
         }
 
         //Prints results
@@ -72,7 +85,7 @@ public class Aben_FinalChall1 {
 
         //Prints product information one by one
         for(int i = 0; i < product.length; i++){
-            System.out.println(product[i]+"\t\tPHP "+price[i]+"\t"+numberOfItems[i]+"\t\tPHP "+totalValue[i]);
+            System.out.println(product[i]+"\t\tPHP "+price[i]+"\t"+quantity[i]+"\t\tPHP "+totalValue[i]);
         }
 
         System.out.println("=====================================================================================");
