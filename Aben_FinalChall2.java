@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 public class Aben_FinalChall2 {
@@ -23,29 +22,29 @@ public class Aben_FinalChall2 {
             "Saturday"
         };
         //Temperature of each city in a week
-        double[][] temperature = new double[3][7];
+        float[][] temperature = new float[3][7];
         //Average temperature of each city
-        double[] averageTemp = new double[3];
+        float[] averageTemp = new float[3];
 
         System.out.println("==========================================================");
         System.out.println("\t\tWEATHER DATA TRACKER");
         System.out.println("==========================================================");
 
-        for (int a = 0; a < 3; a++) {
-            System.out.println("Recording Temperature in: " + city[a]);
-            for (int b = 0; b < 7; b++) {
-                System.out.print(day[b] + ": \t");
-                temperature[a][b] = sc.nextDouble();
+        for (int cityIndex = 0; cityIndex < city.length; cityIndex++) {
+            System.out.println("Recording Temperature in: " + city[cityIndex]);
+            for (int tempIndex = 0; tempIndex < temperature[cityIndex].length; tempIndex++) {
+                System.out.print(day[tempIndex] + ": \t");
+                temperature[cityIndex][tempIndex] = sc.nextFloat();
             }
             System.out.println("---------------------------------------------------------");
         }
 
-        double calculatedTemp = 0;
+        float calculatedTemp = 0;
         int index = 0;
 
         //Calculate temperature
-        for (double cityNum[] : temperature) {
-            for (double tempNum : cityNum) {
+        for (float cityNum[] : temperature) {
+            for (float tempNum : cityNum) {
                 calculatedTemp += tempNum;
             }
             averageTemp[index] = calculatedTemp / 7;
@@ -53,14 +52,18 @@ public class Aben_FinalChall2 {
             calculatedTemp = 0;
         }
 
-        for (int c = 0; c < 3; c++) {
-            System.out.println("\n\n" + city[c]);
-            for (int d = 0; d < 7; d++) {
-                System.out.println(day[d] + ": " + temperature[c][d]);
+        for (int cityIndex = 0; cityIndex < 3; cityIndex++) {
+            System.out.println("\n==========================================================");
+            System.out.println("\t\t" + city[cityIndex]);
+            System.out.println("==========================================================");
+            for (int tempIndex = 0; tempIndex < 7; tempIndex++) {
+                System.out.println(day[tempIndex] + ": \t" + temperature[cityIndex][tempIndex]);
             }
-            System.out.println("Average Temoerature: " + averageTemp[c]);
-            Arrays.sort(temperature[c]);
-            System.out.println("Highest Temperature: " + temperature[c][6]);
+            float[] temps = temperature[cityIndex].clone();
+            Arrays.sort(temps);
+            System.out.println("Average Temperature: " + averageTemp[cityIndex]);
+            System.out.println("Highest Temperature: " + temps[temps.length - 1]);
         }
+        System.out.println("\n---------------------------------------------------------");
     }
 }
