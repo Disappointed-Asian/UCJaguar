@@ -1,0 +1,29 @@
+import java.util.Scanner;
+
+public class Aben_FinalChall3 {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        //Stores the subject, students name, and grade
+        String[] subject = {"CC1", "CC2", "CC7"};
+        String[] students = new String[5];
+        String[][] grade = new String[5][3];
+
+        String studentName;
+        String gradeValue;
+        int averageGrade;
+
+        //Records students and grades
+        for (int i = 0; i < 5; i++) {
+            System.out.print("Type the name of the student: ");
+            studentName = sc.nextLine();
+            students[i] = studentName;
+            for (int j = 0; j < 3; j++) {
+                System.out.println(subject[i] + "[Grade]");
+                gradeValue = sc.nextLine();
+                grade[i][j] = gradeValue;
+            }
+        }
+    }
+}
