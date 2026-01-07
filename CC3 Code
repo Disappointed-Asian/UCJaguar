@@ -1,0 +1,120 @@
+import java.util.*;
+
+
+class Book{
+    String title;
+    String author;
+    boolean isAvailable;
+
+    Book(String title, String author, boolean isAvailable){
+        this.title = title;
+        this.author = author;
+        this.isAvailable = isAvailable;
+    }
+
+    Book(String title, String author){
+        this(title, author, true);
+    }
+
+    void displayBookDetails(){
+        System.out.println("\n============================================");
+        System.out.println("Title of Book: " + this.title);
+        System.out.println("Author of Book: " + this.author);
+        System.out.println("============================================\n");
+    }
+
+    public void borrowBook(){
+        this.isAvailable = false;
+    }
+
+    public void returnBook(){
+        this.isAvailable = true;
+    }
+}
+
+class Library{
+    ArrayList<Book> books;
+
+    Library(ArrayList books){
+        this.books = books;
+    }
+
+    void addBook(Book book){
+        this.books.add(book);
+    }
+
+    void displayAllBooks(){
+        for(Book currentBook: books){
+            currentBook.displayBookDetails();
+        }
+    }
+
+    void searchBookByTitle(String title){
+        for(Book currentBook: books){
+            if(currentBook.title.equals(title)){
+                currentBook.displayBookDetails();
+            }
+        }
+    }
+}
+
+public class LibSysActAben {
+    public static void main(String[] args) {
+        Library lib = new Library(new ArrayList<Book>());
+        Book b1 = new Book("The Biggest Defeat", "GKat");
+        Book b2 = new Book("The Great Dhelly", "Dhell Mar");
+        Book b3 = new Book("Elden Ring", "Jacob");
+
+        lib.addBook(b1);
+        lib.addBook(b2);
+        lib.addBook(b3);
+        
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("\n\n============================================");
+        System.out.println("Welcome to Janelle's Library");
+        System.out.println("============================================");
+
+        lib.displayAllBooks();
+
+        while(true){
+            System.out.println("\n\nType Borrow/Return to Borrow/Return a book.");
+            System.out.println("Type Exit to exit.");
+            String userInput = sc.nextLine();
+
+            if(userInput.equalsIgnoreCase("borrow")){
+                System.out.println("Type book title.");
+                String userBook = sc.nextLine();
+                for (Book book : lib.books) {
+                    if(book.title.equalsIgnoreCase(userBook)){
+                        if(book.isAvailable == true){
+                            book.borrowBook();
+                        }
+                        else{
+                            System.out.println("Book not available.");
+                        }
+                    }
+                }
+            }
+
+            else if(userInput.equalsIgnoreCase("return")){
+                System.out.println("Type book title.");
+                String userBook = sc.nextLine();
+                for (Book book : lib.books) {
+                    if(book.title.equalsIgnoreCase(userBook)){
+                        if(book.isAvailable == false){
+                            book.returnBook();
+                        }
+                        else{
+                            System.out.println("Book already returned.");
+                        }
+                    }
+                }
+            }
+
+            else if(userInput.equalsIgnoreCase("exit")){
+                break;    
+            }
+        }   
+    }
+}
