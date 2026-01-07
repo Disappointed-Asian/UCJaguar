@@ -1,8 +1,6 @@
-package com.mycompany.app;
-
 import java.util.*;
 
-public class App {
+public class LearningContractAben {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -10,80 +8,106 @@ public class App {
         System.out.println("\t\tLEARNING CONTRACT");
         System.out.println("=======================================================");
         
-        String expectations[] = {
-            "I expect myself to do well in this class.",
-            "I expect the instructor to be chill and teach us well.",
-            "I expect to learn new things in this class.",
-            "I expect this class to be fun.",
-            "I expect this class to be challenging."
-        };
-        
         String motivations[] = {
-            "Making my parents proud.",
-            "Passing this class.",
-            "Graduating on time.",
-            "Eagerness to learn.",
-            "Expensive tuition fee."
+            "1. Making my parents proud.",
+            "2. Passing this class.",
+            "3. Graduating on time.",
+            "4. Eagerness to learn.",
+            "5. Expensive tuition fee."
+        };
+
+        String expectations[] = {
+            "1. I expect myself to do well in this class.",
+            "2. I expect the instructor to be chill and teach us well.",
+            "3. I expect to learn new things in this class.",
+            "4. I expect this class to be fun.",
+            "5. I expect this class to be challenging."
+        };
+
+        String contributions[] = {
+            "1. Studying well",
+            "2. Getting enough rest",
+            "3. Passing activities on time",
+            "4. Managing time properly",
+            "5. Listening to the instructor"
+        };
+
+        String hindrances[] = {
+            "1. Not having enough time to study.",
+            "2. Getting sick.",
+            "3. Getting physically exhausted.",
+            "4. Getting mentally tired.",
+            "5. Power interruptions."
         };
         
         while(true){
-            System.out.println("\n\n1 MOTIVATIONS");
+            System.out.println("\n1 MOTIVATIONS");
             System.out.println("2 EXPECTATIONS");
             System.out.println("3 CONTRIBUTIONS");
             System.out.println("4 HINDRANCES");
             System.out.println("5 STOP PROGRAM");
-            int userInput = sc.nextInt();
-            
-            switch (userInput){
-                case 1:
-                    System.out.println("Expectations");
-                    for(int x = 0; x<5; x++){
-                        System.out.println(expectations[x]);
-                    }
-                case 5:
+            System.out.println("\nWrite a number from 1 to 5.");
+
+            try{
+                int userInput = sc.nextInt();
+
+                //Stops the program
+                if(userInput == 5){
+                    System.out.println("\nProgram stopped.");
                     break;
-                
+                }
+
+                //Prints 5 sentence of MECH aspect chosen by the user
+                else if(userInput > 0 && userInput <5){
+                    switch (userInput){
+                    case 1:
+                        System.out.println("\nMOTIVATIONS");
+                        System.out.println("=======================================================");
+                        for(int x = 0; x<5; x++){
+                            System.out.println(motivations[x]);
+                        }
+                        System.out.println("=======================================================");
+                        break;
+                    case 2:
+                        System.out.println("\nEXPECTATIONS");
+                        System.out.println("=======================================================");
+                        for(int x = 0; x<5; x++){
+                            System.out.println(expectations[x]);
+                        }
+                        System.out.println("=======================================================");
+                        break;
+                    case 3:
+                        System.out.println("\nCONTRIBUTIONS");
+                        System.out.println("=======================================================");
+                        for(int x = 0; x<5; x++){
+                            System.out.println(contributions[x]);
+                        }
+                        System.out.println("=======================================================");
+                        break;
+
+                    case 4:
+                        System.out.println("\nHINDRANCES");
+                        System.out.println("=======================================================");
+                        for(int x = 0; x<5; x++){
+                            System.out.println(hindrances[x]);
+                        }
+                        System.out.println("=======================================================");
+                        break;
+                    }
+                }
+                //Prints if input is out of range 
+                else{
+                    System.out.println("\nPLEASE WRITE A NUMBER FROM 1 TO 5.");
+                }
             }
-            
-//            if(userInput.equalsIgnoreCase("EXPECTATIONS")){
-//                System.out.println("Expectations");
-//                System.out.println("I expect myself to do well in this class.");
-//                System.out.println("I expect the instructor to be chill and teach us well.");
-//                System.out.println("I expect to learn new things in this class.");
-//                System.out.println("I expect this class to be fun.");
-//                System.out.println("I expect this class to be challenging.");
-//            }
-//            
-//            else if(userInput.equalsIgnoreCase("CONTRIBUTIONS")){
-//                System.out.println("Contributions");
-//                System.out.println("Studying well.");
-//                System.out.println("Getting enough rest.");
-//                System.out.println("Passing activities on time.");
-//                System.out.println("Managing time properly.");
-//                System.out.println("Listening carefully to the instructor.");
-//            }
-//            
-//            else if(userInput.equalsIgnoreCase("MOTIVATIONS")){
-//                System.out.println("Motivations");
-//                System.out.println("Making my parents proud.");
-//                System.out.println("Passint this class.");
-//                System.out.println("Graduating on time.");
-//                System.out.println("Eagerness to learn.");
-//                System.out.println("Expensive tuition fee.");
-//            }
-//            
-//            else if (userInput.equalsIgnoreCase("Hindrances")){
-//                System.out.println("Hindrances");
-//                System.out.println("Not having enough time to study.");
-//                System.out.println("Getting sick.");
-//                System.out.println("Getting physically exhausted.");
-//                System.out.println("Getting mentally tired.");
-//                System.out.println("Traffic.");
-//            }
-//            
-//            else if(userInput.equalsIgnoreCase("STOP")){
-//                break;
-//            }
+            //Checks if user input is a number
+            catch(InputMismatchException e){
+                System.out.println("\nPLEASE WRITE A NUMBER FROM 1 TO 5.");
+                sc.next();
+            }
         }
+
+        sc.close();
+
     }
 }
