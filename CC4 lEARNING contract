@@ -1,0 +1,89 @@
+package com.mycompany.app;
+
+import java.util.*;
+
+public class App {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("=======================================================");
+        System.out.println("\t\tLEARNING CONTRACT");
+        System.out.println("=======================================================");
+        
+        String expectations[] = {
+            "I expect myself to do well in this class.",
+            "I expect the instructor to be chill and teach us well.",
+            "I expect to learn new things in this class.",
+            "I expect this class to be fun.",
+            "I expect this class to be challenging."
+        };
+        
+        String motivations[] = {
+            "Making my parents proud.",
+            "Passing this class.",
+            "Graduating on time.",
+            "Eagerness to learn.",
+            "Expensive tuition fee."
+        };
+        
+        while(true){
+            System.out.println("\n\n1 MOTIVATIONS");
+            System.out.println("2 EXPECTATIONS");
+            System.out.println("3 CONTRIBUTIONS");
+            System.out.println("4 HINDRANCES");
+            System.out.println("5 STOP PROGRAM");
+            int userInput = sc.nextInt();
+            
+            switch (userInput){
+                case 1:
+                    System.out.println("Expectations");
+                    for(int x = 0; x<5; x++){
+                        System.out.println(expectations[x]);
+                    }
+                case 5:
+                    break;
+                
+            }
+            
+//            if(userInput.equalsIgnoreCase("EXPECTATIONS")){
+//                System.out.println("Expectations");
+//                System.out.println("I expect myself to do well in this class.");
+//                System.out.println("I expect the instructor to be chill and teach us well.");
+//                System.out.println("I expect to learn new things in this class.");
+//                System.out.println("I expect this class to be fun.");
+//                System.out.println("I expect this class to be challenging.");
+//            }
+//            
+//            else if(userInput.equalsIgnoreCase("CONTRIBUTIONS")){
+//                System.out.println("Contributions");
+//                System.out.println("Studying well.");
+//                System.out.println("Getting enough rest.");
+//                System.out.println("Passing activities on time.");
+//                System.out.println("Managing time properly.");
+//                System.out.println("Listening carefully to the instructor.");
+//            }
+//            
+//            else if(userInput.equalsIgnoreCase("MOTIVATIONS")){
+//                System.out.println("Motivations");
+//                System.out.println("Making my parents proud.");
+//                System.out.println("Passint this class.");
+//                System.out.println("Graduating on time.");
+//                System.out.println("Eagerness to learn.");
+//                System.out.println("Expensive tuition fee.");
+//            }
+//            
+//            else if (userInput.equalsIgnoreCase("Hindrances")){
+//                System.out.println("Hindrances");
+//                System.out.println("Not having enough time to study.");
+//                System.out.println("Getting sick.");
+//                System.out.println("Getting physically exhausted.");
+//                System.out.println("Getting mentally tired.");
+//                System.out.println("Traffic.");
+//            }
+//            
+//            else if(userInput.equalsIgnoreCase("STOP")){
+//                break;
+//            }
+        }
+    }
+}
