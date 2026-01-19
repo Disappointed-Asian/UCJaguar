@@ -1,30 +1,44 @@
 import java.util.*;
 
 public class ArrayAddressCalculator{
+    private static final Scanner sc = new Scanner(System.in);
+    
+    public static int getValue(String categ){
+        int categNum;
+        
+        while(true){
+            System.out.print("Enter " + categ);
+            categNum = sc.nextInt();
+            
+            if(categNum <= 0){
+                System.out.println("Input a number more than 0.");
+            } else {
+                return categNum;
+            }
+        }
+    }
+    
     public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        try{
             System.out.println("--------Address Calculator--------");
-            System.out.print("Enter the number of Dimensions: ");
-            int dimensions = sc.nextInt();
-
-            System.out.print("Enter base or alpha: ");
+            
+            int dimensions = getValue("the number of Dimensions: ");
+            
+            System.out.print("Enter the Base: ");
             int base = sc.nextInt();
-
-            System.out.print("Enter element size: ");
-            int elementSize = sc.nextInt();
+            
+            int elementSize = getValue("Element Size: ");
 
             System.out.println("\n--------Upper Bounds--------");
             int[] upperBounds = new int[dimensions];
             for(int i = 0; i < dimensions; i++){
-                System.out.print("Enter upper bounds at index " + i + ": ");
+                System.out.print("Enter upper bounds at dimension " + i + ": ");
                 upperBounds[i] = sc.nextInt();
             }
 
             System.out.println("\n--------Target Element--------");
             int[] targetElement = new int[dimensions];
             for(int i = 0; i < dimensions; i++){
-                System.out.print("Enter target element at index " + i + ": ");
+                System.out.print("Enter target element at dimension " + i + ": ");
                 targetElement[i] = sc.nextInt();
             }
 
@@ -41,9 +55,6 @@ public class ArrayAddressCalculator{
             int output = base + totalResult * elementSize;
 
             System.out.println("\nAddress is: " + output);
-        } catch(InputMismatchException e){
-            System.out.println();
-        }
     }
 
 }
