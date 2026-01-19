@@ -1,0 +1,92 @@
+import java.util.*;
+
+public class SlayTheSpire {
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        Character archer = new Character(null, "Archer", 70);
+        Character warrior = new Character(null, "Warrior", 80);
+        Character mage = new Character(null, "Mage", 65);
+        Character assassin = new Character(null, "Assassin", 65);
+
+        while(true){
+            System.out.println("========Choose a Character========");
+            System.out.println("Archer");
+            System.out.println("Warrior");
+            System.out.println("Mage");
+            System.out.println("Assassin");
+            System.out.println("----------------------------------");
+            System.out.print("==> ");
+            String userChoice = sc.nextLine();
+
+            if(userChoice.equalsIgnoreCase("archer")){
+                archer.jobDetails();
+            }
+
+            String confirmation;
+
+            while(true){
+                System.out.println("-------- Confirm? (Y/N) --------");
+                confirmation = sc.nextLine();
+
+                if(!(confirmation.equalsIgnoreCase("N")||
+                    confirmation.equalsIgnoreCase("Y"))){
+                    continue;
+                } else{
+                    break;
+                }
+            }
+
+            if(confirmation.equalsIgnoreCase("N")){
+                continue;
+            }
+
+
+
+        }
+    }
+}
+
+class Character{
+    String name;
+    String job;
+    int health;
+    int damage;
+    int speed;
+    int exp;
+
+    Character(String name, String job, int health){
+        this.name = name;
+        this.job = job;
+        this.health = health;
+    }
+
+    String getJob(){
+        return job;
+    }
+
+    int getHealth(){
+        return health;
+    }
+
+    void jobDetails(){
+        System.out.println("\n========Job Details========");
+        System.out.println("Job: " + getJob());
+        System.out.println("Health: " + getHealth());
+    }
+}
+
+class Enemy{
+    String name;
+    int health;
+    int damage;
+    int speed;
+    int exp;
+
+    Enemy(String name, int health, int damage, int speed, int exp) {
+        this.name = name;
+        this.health = health;
+        this.damage = damage;
+        this.speed = speed;
+        this.exp = exp;
+    }
+}
