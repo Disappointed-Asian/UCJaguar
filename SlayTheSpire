@@ -1,92 +1,154 @@
 import java.util.*;
 
-public class SlayTheSpire {
+public class Game {
+    public static Scanner sc = new Scanner(System.in);
+    public static Random rand = new Random();
     public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        Character archer = new Character(null, "Archer", 70);
-        Character warrior = new Character(null, "Warrior", 80);
-        Character mage = new Character(null, "Mage", 65);
-        Character assassin = new Character(null, "Assassin", 65);
+        //Warrior Skills
+        Skills strike = new Skills("Strike", 8, 0);
+        Skills block = new Skills("Block" ,0, 4);
+        Skills bash = new Skills("Bash", 6, 0); //twice
+        Skills cleave = new Skills("Cleave", 5, 1); //ls
 
+        //List of skills for each job
+        Skills[] warriorSkills = {strike, block, bash, cleave};
+
+        //List of Heroes
+        Hero warrior = new Hero("Warrior", warriorSkills, 80);
+
+        //List of Enemies
+        Skills attack = new Skills("Basic Attack", 7, 0);
+        Skills[] jawWormSkills = {attack};
+        Enemy jawWorm = new Enemy("Jaw Worm", jawWormSkills, 40,0, 40);
+
+
+        Hero[] heroes = {warrior};
+        Enemy[] enemies = {jawWorm};
+
+        System.out.println("================================");
+        System.out.println("\tSLAY THE SPIRE");
+        System.out.println("================================");
+
+        //Job Selection
+        Hero userHero = choose(heroes);
+        if(userHero == null){
+            choose(heroes);
+        }
+
+        System.out.println("\n\n");
+
+
+        //Fighting
+        Enemy enemy = enemies[rand.nextInt(0, 1)];
+        System.out.println("You face against " + enemy.getName());
+    }
+
+    static Hero choose(Hero[] heroes){
         while(true){
-            System.out.println("========Choose a Character========");
-            System.out.println("Archer");
+            System.out.println("\tCHOOSE A HERO");
             System.out.println("Warrior");
-            System.out.println("Mage");
-            System.out.println("Assassin");
-            System.out.println("----------------------------------");
+            System.out.println("--------------------------------");
             System.out.print("==> ");
+            Hero userHero;
             String userChoice = sc.nextLine();
 
-            if(userChoice.equalsIgnoreCase("archer")){
-                archer.jobDetails();
-            }
-
-            String confirmation;
-
-            while(true){
-                System.out.println("-------- Confirm? (Y/N) --------");
-                confirmation = sc.nextLine();
-
-                if(!(confirmation.equalsIgnoreCase("N")||
-                    confirmation.equalsIgnoreCase("Y"))){
-                    continue;
-                } else{
-                    break;
+            for(Hero hero: heroes){
+                if(userChoice.equalsIgnoreCase(hero.getName())){
+                    userHero = hero;
+                    userHero.displayDetails();
+                    System.out.println();
+                    if(confirm(hero) <= 0){
+                        return hero;
+                    } else{
+                        break;
+                    }
                 }
             }
+        }
+    }
 
-            if(confirmation.equalsIgnoreCase("N")){
-                continue;
+    static int confirm(Hero hero){
+        while(true){
+            System.out.println("---------Confirm? (Y/N)---------");
+            String confirmation = sc.nextLine();
+            if(confirmation.equalsIgnoreCase("Y")){
+                return 0;
+            } else if(confirmation.equalsIgnoreCase("N")){
+                return 1;
             }
-
-
-
         }
     }
 }
 
-class Character{
+class Hero{
     String name;
-    String job;
+    Skills[] job;
     int health;
     int damage;
-    int speed;
+    int speed = 1;
     int exp;
 
-    Character(String name, String job, int health){
+    Hero(String name, Skills[] job, int health){
         this.name = name;
         this.job = job;
         this.health = health;
     }
 
-    String getJob(){
-        return job;
+    String getName(){
+        return name;
     }
 
     int getHealth(){
         return health;
     }
 
-    void jobDetails(){
-        System.out.println("\n========Job Details========");
-        System.out.println("Job: " + getJob());
+    Skills[] getSkills(){
+        return job;
+    }
+
+    void displayDetails(){
+        System.out.println("Hero: " + getName());
         System.out.println("Health: " + getHealth());
+        System.out.print("Skills: ");
+        for(Skills skill: getSkills()){
+            System.out.print(skill.getSkillName() + " ");
+        }
+    }
+}
+
+class Skills{
+    String skillName;
+    int damage;
+    int block;
+
+    Skills(String skillName, int damage, int block){
+        this.skillName = skillName;
+        this.damage = damage;
+        this.block = block;
+    }
+
+    String getSkillName(){
+        return skillName;
     }
 }
 
 class Enemy{
     String name;
+    Skills[] job;
     int health;
     int damage;
     int speed;
     int exp;
 
-    Enemy(String name, int health, int damage, int speed, int exp) {
+    Enemy(String name, Skills[] job, int health, int speed, int exp){
         this.name = name;
+        this.job = job;
         this.health = health;
-        this.damage = damage;
         this.speed = speed;
         this.exp = exp;
+    }
+
+    String getName(){
+        return name;
     }
 }
