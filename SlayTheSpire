@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Game {
+public class SlayTheSpire {
     public static Scanner sc = new Scanner(System.in);
     public static Random rand = new Random();
     public static void main(String[] args){
@@ -17,8 +17,9 @@ public class Game {
         Hero warrior = new Hero("Warrior", warriorSkills, 80);
 
         //List of Enemies
-        Skills attack = new Skills("Basic Attack", 7, 0);
-        Skills[] jawWormSkills = {attack};
+        Skills jawWormAttack = new Skills("Basic Attack", 7, 0);
+        Skills jawWormDefend = new Skills("Block", 0, 5);
+        Skills[] jawWormSkills = {jawWormAttack, jawWormDefend};
         Enemy jawWorm = new Enemy("Jaw Worm", jawWormSkills, 40,0, 40);
 
 
@@ -35,12 +36,82 @@ public class Game {
             choose(heroes);
         }
 
-        System.out.println("\n\n");
+        System.out.println("\n");
 
 
         //Fighting
         Enemy enemy = enemies[rand.nextInt(0, 1)];
         System.out.println("You face against " + enemy.getName());
+
+        int state = 0;
+
+        while(true){
+            System.out.println("You: " + userHero.getHealth());
+            System.out.println(enemy.name + ": " + enemy.getHealth());
+            for(int i = 1; i < 5; i++){
+                System.out.println(i + " " + userHero.getSkills()[i-1].skillName);
+            }
+            System.out.println("--------------------------------");
+            System.out.print("==> ");
+            String userAction = sc.nextLine();
+
+            switch(userAction){
+                case "1":
+                    takeHeroAction(enemy, userHero, 0);
+                    System.out.println("--------You Used Strike!--------");
+                    break;
+                case "2":
+                    takeHeroAction(enemy, userHero, 1);
+                    System.out.println("--------You Used Block!--------");
+                    break;
+                case "3":
+                    takeHeroAction(enemy, userHero, 2);
+                    System.out.println("--------You Used Bash!--------");
+                    break;
+                case "4":
+                    takeHeroAction(enemy, userHero, 3);
+                    System.out.println("--------You Used Cleave!--------");
+                    break;
+                default:
+                    System.out.println("--------Not A Skill!--------");
+                    break;
+            }
+
+            if(enemy.health <= 0){
+                userHero.addExp(enemy.getExp());
+                break;
+            }
+
+            int enemyAction = rand.nextInt(0, 2);
+
+            switch(enemyAction){
+                case 0:
+                    takeEnemyAction(enemy, userHero, enemyAction);
+                    System.out.println("--------" + enemy.getName() + " Attacks!--------");
+                    break;
+                case 1:
+                    takeEnemyAction(enemy, userHero, enemyAction);
+                    System.out.println("--------" + enemy.getName() + " Blocks!--------");
+                    break;
+            }
+
+            if(userHero.getHealth() <= 0){
+                System.out.println("--------You Died!--------");
+                state++;
+                break;
+            }
+
+        }
+
+        if(state > 0){
+            System.out.println("Try Again?");
+            System.exit(0);
+        }
+
+        //To Level Up
+        userHero.addExp(enemy.exp);
+
+        System.out.println("END");
     }
 
     static Hero choose(Hero[] heroes){
@@ -67,6 +138,7 @@ public class Game {
         }
     }
 
+    //For confirmations
     static int confirm(Hero hero){
         while(true){
             System.out.println("---------Confirm? (Y/N)---------");
@@ -77,6 +149,18 @@ public class Game {
                 return 1;
             }
         }
+    }
+
+    //For Hero Action
+    static void takeHeroAction(Enemy enemy, Hero hero, int skillNumber){
+        enemy.takeDamage(hero.getSkills()[skillNumber].damage);
+        hero.earnBlock(hero.getSkills()[skillNumber].block);
+    }
+
+    //For Enemy Action
+    static void takeEnemyAction(Enemy enemy, Hero hero, int skillNumber){
+        hero.takeDamage(enemy.getSkills()[skillNumber].damage);
+        enemy.earnBlock(enemy.getSkills()[skillNumber].block);
     }
 }
 
@@ -114,6 +198,18 @@ class Hero{
             System.out.print(skill.getSkillName() + " ");
         }
     }
+
+    void earnBlock(int block){
+        this.health += block; 
+    }
+
+    void takeDamage(int damage){
+        this.health -= damage;
+    }
+
+    void addExp(int exp){
+        this.exp += exp;
+    }
 }
 
 class Skills{
@@ -150,5 +246,25 @@ class Enemy{
 
     String getName(){
         return name;
+    }
+
+    int getHealth(){
+        return health;
+    }
+
+    int getExp(){
+        return exp;
+    }
+
+    Skills[] getSkills(){
+        return job;
+    }
+
+    void takeDamage(int damage){
+        this.health -= damage;
+    }
+
+    void earnBlock(int block){
+        this.health += block; 
     }
 }
