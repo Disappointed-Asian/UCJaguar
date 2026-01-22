@@ -1,12 +1,15 @@
 import java.util.*;
 
-public class SlayTheSpire {
+public class Game {
     public static Scanner sc = new Scanner(System.in);
     public static Random rand = new Random();
     public static void main(String[] args){
+        //List of Buffs
+        Buff growth = new Buff("Growth", 8);
+
         //Warrior Skills
         Skills strike = new Skills("Strike", 8, 0);
-        Skills block = new Skills("Block" ,0, 4);
+        Skills block = new Skills("Block" ,0, 7);
         Skills bash = new Skills("Bash", 6, 0); //twice
         Skills cleave = new Skills("Cleave", 5, 1); //ls
 
@@ -22,9 +25,14 @@ public class SlayTheSpire {
         Skills[] jawWormSkills = {jawWormAttack, jawWormDefend};
         Enemy jawWorm = new Enemy("Jaw Worm", jawWormSkills, 40,0, 40);
 
+        Skills fungiBeastAttack = new Skills("Basic Attack", 9, 0);
+        Skills fungiBeastGrowth = new Skills("Growth", 0, 5, growth);
+        Skills[] fungiBeastSkills = {fungiBeastAttack, fungiBeastGrowth};
+        Enemy fungiBeast = new Enemy("Fungi Beast", fungiBeastSkills, 70, 0, 40);
+
 
         Hero[] heroes = {warrior};
-        Enemy[] enemies = {jawWorm};
+        Enemy[] enemies = {fungiBeast, jawWorm};
 
         System.out.println("================================");
         System.out.println("\tSLAY THE SPIRE");
@@ -40,16 +48,16 @@ public class SlayTheSpire {
 
 
         //Fighting
-        Enemy enemy = enemies[rand.nextInt(0, 1)];
+        Enemy enemy = enemies[rand.nextInt(0, enemies.length)];
         System.out.println("You face against " + enemy.getName());
 
         int state = 0;
-
+        Buff previousEnemyBuff = null;
         while(true){
             System.out.println("You: " + userHero.getHealth());
-            System.out.println(enemy.name + ": " + enemy.getHealth());
+            System.out.println(enemy.getName() + ": " + enemy.getHealth());
             for(int i = 1; i < 5; i++){
-                System.out.println(i + " " + userHero.getSkills()[i-1].skillName);
+                System.out.println(i + " " + userHero.getSkills()[i-1].getSkillName());
             }
             System.out.println("--------------------------------");
             System.out.print("==> ");
@@ -77,24 +85,22 @@ public class SlayTheSpire {
                     break;
             }
 
-            if(enemy.health <= 0){
+            //Check if enemy dies
+            if(enemy.getHealth() <= 0){
                 userHero.addExp(enemy.getExp());
                 break;
             }
 
-            int enemyAction = rand.nextInt(0, 2);
+            //Enemy chooses which skill to attack
+            int enemyAction = rand.nextInt(0, enemy.getSkills().length);
+            //Enemy applies buff if there is a buff, attacks or defends
+            Buff enemyBuff = enemy.getSkills()[enemyAction].getBuff();
+            takeEnemyAction(enemy, userHero, enemyAction, enemyBuff, previousEnemyBuff);
+            previousEnemyBuff = enemyBuff;
 
-            switch(enemyAction){
-                case 0:
-                    takeEnemyAction(enemy, userHero, enemyAction);
-                    System.out.println("--------" + enemy.getName() + " Attacks!--------");
-                    break;
-                case 1:
-                    takeEnemyAction(enemy, userHero, enemyAction);
-                    System.out.println("--------" + enemy.getName() + " Blocks!--------");
-                    break;
-            }
-
+            System.out.println("--------" + enemy.getName() + " used " + enemy.getSkills()[enemyAction].getSkillName() + "!--------");
+            
+            //Checks if hero dies
             if(userHero.getHealth() <= 0){
                 System.out.println("--------You Died!--------");
                 state++;
@@ -109,7 +115,7 @@ public class SlayTheSpire {
         }
 
         //To Level Up
-        userHero.addExp(enemy.exp);
+        userHero.addExp(enemy.getExp());
 
         System.out.println("END");
     }
@@ -153,29 +159,61 @@ public class SlayTheSpire {
 
     //For Hero Action
     static void takeHeroAction(Enemy enemy, Hero hero, int skillNumber){
-        enemy.takeDamage(hero.getSkills()[skillNumber].damage);
-        hero.earnBlock(hero.getSkills()[skillNumber].block);
+        hero.setDamage(skillNumber);
+        enemy.takeDamage(hero.getDamage());
+        hero.earnBlock(hero.getSkills()[skillNumber].getBlock());
     }
 
     //For Enemy Action
-    static void takeEnemyAction(Enemy enemy, Hero hero, int skillNumber){
-        hero.takeDamage(enemy.getSkills()[skillNumber].damage);
-        enemy.earnBlock(enemy.getSkills()[skillNumber].block);
+    static void takeEnemyAction(Enemy enemy, Hero hero, int skillNumber, Buff buff, Buff previousEnemyBuff){
+        if (buff != null) {
+            buff.applyBuffEnemy(enemy);
+            enemy.earnBlock(enemy.getSkills()[skillNumber].getBlock());
+            return;
+        }
+
+        // Enemy attacks
+        enemy.setDamage(skillNumber);
+
+        // Apply stacked buff BEFORE attacking
+        if (previousEnemyBuff != null && previousEnemyBuff.getIsEvoked()) {
+            if (previousEnemyBuff.getBuffName().equalsIgnoreCase("growth")) {
+                enemy.addDamage(
+                    previousEnemyBuff.getQuantity() * previousEnemyBuff.numberOfTimesCalled
+                );
+            }
+        }
+
+        hero.takeDamage(enemy.getDamage());
+        enemy.earnBlock(enemy.getSkills()[skillNumber].getBlock());
+
+        // Consume buff AFTER attack
+        if (previousEnemyBuff != null) {
+            previousEnemyBuff.removeBuffEnemy(enemy);
+        }
     }
 }
 
 class Hero{
-    String name;
-    Skills[] job;
-    int health;
-    int damage;
-    int speed = 1;
-    int exp;
+    private String name;
+    private Skills[] job;
+    private int health;
+    private int damage;
+    private int speed = 1;
+    private int exp;
 
     Hero(String name, Skills[] job, int health){
         this.name = name;
         this.job = job;
         this.health = health;
+    }
+
+    void setDamage(int skillNumber){
+        this.damage = this.getSkills()[skillNumber].getDamage();
+    }
+
+    int getDamage(){
+        return this.damage;
     }
 
     String getName(){
@@ -213,9 +251,17 @@ class Hero{
 }
 
 class Skills{
-    String skillName;
-    int damage;
-    int block;
+    private String skillName;
+    private int damage;
+    private int block;
+    private Buff buff;
+
+    Skills(String skillName, int damage, int block, Buff buff){
+        this.skillName = skillName;
+        this.damage = damage;
+        this.block = block;
+        this.buff = buff;
+    }
 
     Skills(String skillName, int damage, int block){
         this.skillName = skillName;
@@ -224,17 +270,29 @@ class Skills{
     }
 
     String getSkillName(){
-        return skillName;
+        return this.skillName;
+    }
+
+    int getDamage(){
+        return this.damage;
+    }
+
+    int getBlock(){
+        return this.block;
+    }
+
+    Buff getBuff(){
+        return this.buff;
     }
 }
 
 class Enemy{
-    String name;
-    Skills[] job;
-    int health;
-    int damage;
-    int speed;
-    int exp;
+    private String name;
+    private Skills[] job;
+    private int health;
+    private int damage;
+    private int speed;
+    private int exp;
 
     Enemy(String name, Skills[] job, int health, int speed, int exp){
         this.name = name;
@@ -252,6 +310,14 @@ class Enemy{
         return health;
     }
 
+    void setDamage(int skillNumber){
+        this.damage = this.getSkills()[skillNumber].getDamage();
+    }
+
+    int getDamage(){
+        return this.damage;
+    }
+
     int getExp(){
         return exp;
     }
@@ -266,5 +332,58 @@ class Enemy{
 
     void earnBlock(int block){
         this.health += block; 
+    }
+
+    //Buffs
+    void addDamage(int damage){
+        this.damage += damage;
+    }
+}
+
+class Buff{
+    private String buffName;
+    private int quantity;
+    private boolean isEvoked = false;
+    int numberOfTimesCalled = 1;
+
+    Buff(String buffName, int quantity){
+        this.buffName = buffName;
+        this.quantity = quantity;
+    }
+
+    void applyBuffEnemy(Enemy enemy){
+        if(this.isEvoked){
+            this.numberOfTimesCalled++;
+        }
+        this.isEvoked = true;
+        if(buffName.equalsIgnoreCase("growth")){
+            enemy.addDamage(this.quantity);
+        }
+    }
+
+    void removeBuffEnemy(Enemy enemy){
+        if(this.isEvoked){
+            if(buffName.equalsIgnoreCase("growth")){
+                enemy.addDamage(this.quantity * -1 * this.numberOfTimesCalled);
+                this.isEvoked = false;
+                this.numberOfTimesCalled = 1;
+            }
+        }
+    }
+
+    String getBuffName(){
+        return buffName;
+    }
+
+    int getQuantity(){
+        return quantity;
+    }
+
+    boolean getIsEvoked(){
+        return isEvoked;
+    }
+
+    boolean setIsEvoked(boolean isEvoked){
+        return this.isEvoked = isEvoked;
     }
 }
