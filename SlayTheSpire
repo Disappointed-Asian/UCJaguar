@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Game {
+public class SlayTheSpire {
     public static Scanner sc = new Scanner(System.in);
     public static Random rand = new Random();
     public static void main(String[] args){
@@ -20,11 +20,13 @@ public class Game {
         Hero warrior = new Hero("Warrior", warriorSkills, 80);
 
         //List of Enemies
+        //Jaw Worm
         Skills jawWormAttack = new Skills("Basic Attack", 7, 0);
         Skills jawWormDefend = new Skills("Block", 0, 5);
         Skills[] jawWormSkills = {jawWormAttack, jawWormDefend};
         Enemy jawWorm = new Enemy("Jaw Worm", jawWormSkills, 40,0, 40);
 
+        //Fungi Beast
         Skills fungiBeastAttack = new Skills("Basic Attack", 9, 0);
         Skills fungiBeastGrowth = new Skills("Growth", 0, 5, growth);
         Skills[] fungiBeastSkills = {fungiBeastAttack, fungiBeastGrowth};
@@ -38,18 +40,14 @@ public class Game {
         System.out.println("\tSLAY THE SPIRE");
         System.out.println("================================");
 
-        //Job Selection
         Hero userHero = choose(heroes);
         if(userHero == null){
             choose(heroes);
         }
 
-        System.out.println("\n");
-
-
         //Fighting
         Enemy enemy = enemies[rand.nextInt(0, enemies.length)];
-        System.out.println("You face against " + enemy.getName());
+        System.out.println("\nYou face against " + enemy.getName());
 
         int state = 0;
         Buff previousEnemyBuff = null;
@@ -212,12 +210,12 @@ class Hero{
         this.damage = this.getSkills()[skillNumber].getDamage();
     }
 
-    int getDamage(){
-        return this.damage;
-    }
-
     String getName(){
         return name;
+    }
+
+    int getDamage(){
+        return this.damage;
     }
 
     int getHealth(){
@@ -303,15 +301,15 @@ class Enemy{
     }
 
     String getName(){
-        return name;
+        return this.name;
+    }
+
+    Skills[] getSkills(){
+        return this.job;
     }
 
     int getHealth(){
-        return health;
-    }
-
-    void setDamage(int skillNumber){
-        this.damage = this.getSkills()[skillNumber].getDamage();
+        return this.health;
     }
 
     int getDamage(){
@@ -319,11 +317,11 @@ class Enemy{
     }
 
     int getExp(){
-        return exp;
+        return this.exp;
     }
 
-    Skills[] getSkills(){
-        return job;
+    void setDamage(int skillNumber){
+        this.damage = this.getSkills()[skillNumber].getDamage();
     }
 
     void takeDamage(int damage){
@@ -372,15 +370,15 @@ class Buff{
     }
 
     String getBuffName(){
-        return buffName;
+        return this.buffName;
     }
 
     int getQuantity(){
-        return quantity;
+        return this.quantity;
     }
 
     boolean getIsEvoked(){
-        return isEvoked;
+        return this.isEvoked;
     }
 
     boolean setIsEvoked(boolean isEvoked){
