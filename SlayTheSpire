@@ -30,7 +30,16 @@ public class SlayTheSpire{
         System.out.println("You tighten your grip and prepare yourself.");
         System.out.println("THE FIGHT BEGINS!!!");
 
-        fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        boolean win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
         levelUp(hero, enemy);
         heroHeal(hero);
         load();
@@ -46,7 +55,16 @@ public class SlayTheSpire{
         System.out.println("You know one thing for sure: ");
         System.out.println("IF YOU LET THIS DRAG ON, IT WILL OVERWHELM YOU.");
 
-        fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
         levelUp(hero, enemy);
         heroHeal(hero);
         load();
@@ -62,7 +80,16 @@ public class SlayTheSpire{
         System.out.println("Hesitate too long... choose the wrong move... ");
         System.out.println("AND IT WILL MAKE YOU REGRET IT.");
 
-        fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
         levelUp(hero, enemy);
 
 
@@ -76,7 +103,16 @@ public class SlayTheSpire{
         System.out.println("A " + enemy.getName() + " locks its eyes onto you.");
         System.out.println("");
 
-        fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
         levelUp(hero, enemy);
 
         load();
@@ -101,7 +137,16 @@ public class SlayTheSpire{
         System.out.println("This is the true test of endurance.");
         System.out.println("THE FIGHT BEGINS.");
 
-        fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
         levelUp(hero, enemy);
 
         load();
@@ -134,7 +179,7 @@ public class SlayTheSpire{
         hero.addBlock((int) (hero.getMaxHealth() * 0.25));
     }
 
-    static void fight(Entity hero, Entity enemy, Buff previousHeroBuff, Buff previousEnemyBuff){
+    static boolean fight(Entity hero, Entity enemy, Buff previousHeroBuff, Buff previousEnemyBuff){
         while(true){
             System.out.println("--------------------------------");
             System.out.println(hero.getName() + ": " + hero.getHealth());
@@ -166,10 +211,11 @@ public class SlayTheSpire{
 
             if(hero.getHealth()<= 0){
                 System.out.println("========YOU FAILED========");
-                System.exit(0);
+                return false;
             } else if(enemy.getHealth() <= 0){
-                break;
+                return true;
             }
+            System.out.println("\n");
         }
     }
 
@@ -614,7 +660,6 @@ class Buff{
     private int timesCalled;
     private int firstDamage;
     private int secondDamage;
-    private int poisonDamage;
     private boolean isEvoked = false;
 
     Buff(String buffName, int level) {
