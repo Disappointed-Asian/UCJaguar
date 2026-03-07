@@ -1,4 +1,3 @@
-package cc4.bst;
 import java.util.*;
 
 public class BST {
@@ -8,9 +7,9 @@ public class BST {
         String treeSize;
         String start;
         
-        //Edge Case where input is less than 1
+        //Tree Size
         while(true){
-            System.out.print("Input tree size: ");
+            System.out.print("Input size of array: ");
             treeSize = sc.nextLine();
             
             if(isValidInput(treeSize)){
@@ -18,8 +17,9 @@ public class BST {
             }
         }
         
+        //Start
         while(true){
-            System.out.print("Input root node: ");
+            System.out.print("Input start of array: ");
             start = sc.nextLine();
             
             if(isValidInput(start)){
@@ -27,7 +27,7 @@ public class BST {
             }
         }
         
-        //Create the BST
+        //Create the array of numbers to make the tree
         int[] tree = new int[Integer.parseInt(treeSize)];
         tree[0] = Integer.parseInt(start);
         
@@ -39,37 +39,61 @@ public class BST {
         
         System.out.println(Arrays.toString(tree));
         
-        String targetElement;
+        //Create the BST
+        int targetElement;
+        int root;
         
-        //Suspicious call. Fix this.
         while(true){
-            System.out.print("Choose a number from the tree: ");
-            targetElement = sc.nextLine();
-            int treeElement = Integer.parseInt(targetElement);
-            if(isValidInput(targetElement)){
-                if(Arrays.asList(tree).contains(treeElement)){
-                    //New root node
+            try{
+                System.out.print("Choose a number from the tree to be the root node: ");
+                targetElement = sc.nextInt();
+                if(isPresent(tree, targetElement)){
+                    root = targetElement;
                     break;
                 }
-                else{
-                    System.out.println("Invalid");
-                }
+            }catch(InputMismatchException e){
+                System.out.println("Invalid.");
+                sc.next();
+            } 
+        }
+
+        Node rootNode = new Node(root);
+
+        for(int i = 0; i < tree.length; i++){
+            if(tree[i] != root){
+                insertNode(tree, i, rootNode);
+            }
+        }
+
+        System.out.print("Final Output: ");
+        printLevelOrder(rootNode);
+    }
+
+    static void insertNode(int[] tree, int value, Node currentNode){
+        if(tree[value]< currentNode.value){
+            if(currentNode.leftChild == null){
+                currentNode.leftChild = new Node(tree[value]);
+            } else{
+                insertNode(tree, value, currentNode.leftChild);
+            }
+        } else if(tree[value] > currentNode.value){
+            if(currentNode.rightChild == null){
+                currentNode.rightChild = new Node(tree[value]);
+            } else{
+                insertNode(tree, value, currentNode.rightChild);
             }
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    static boolean isPresent(int[] tree, int targetElement){
+        for(int element: tree){
+            if(element==targetElement){
+                return true;
+            }
+        }
+        System.out.println("Invalid");
+        return false;
+    }
     
     static boolean isValidInput(String input){
         for(char c: input.toCharArray()){
@@ -78,6 +102,55 @@ public class BST {
                 return false;
             }
         }
+        if(Integer.parseInt(input) < 1){
+            System.out.println("Not a valid input.");
+            return false;
+        }
         return true;
+    }
+
+    static int getHeight(Node node){
+        if(node == null){
+            return 0;
+        }
+
+        int leftHeight = getHeight(node.leftChild);
+        int rightHeight = getHeight(node.rightChild);
+
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    static void printLevelOrder(Node root){
+        int height = getHeight(root);
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        int totalNodes = (int)Math.pow(2, height) - 1;
+
+        for(int i = 0; i < totalNodes; i++){
+            Node current = queue.poll();
+
+            if(current == null){
+                System.out.print("0 ");
+                queue.add(null);
+                queue.add(null);
+            } 
+            else{
+                System.out.print(current.value + " ");
+                queue.add(current.leftChild);
+                queue.add(current.rightChild);
+            }
+        }
+    }
+}
+
+class Node{
+    int value;
+    Node leftChild = null;
+    Node rightChild = null;
+
+    Node(int value){
+        this.value = value;
     }
 }
