@@ -1,302 +1,176 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
+package cc4.bst;
 
-package labactivity.binarysearchtreev1;
+import java.util.*;
+ 
+public class BST {
+ 
+    // BST node
+    static class Node {
+        int value;
+        Node left, right;
 
-import java.util.Scanner;
+        Node(int val) {
+        this.value = val;
+        left = right = null;
+        }
+    }
 
-public class BinarySearchTreeV1 {
+    static Node root = null;
+    static ArrayList<Integer> searchedNodes = new ArrayList<>();
+    static ArrayList<Integer> searchedIndexes = new ArrayList<>();
 
-    static double[] tree = new double[100];
+    // INSERT node into BST
+    public static Node insert(Node node, int value) {
+        if (node == null) return new Node(value);
+
+        if (value < node.value)
+            node.left = insert(node.left, value);
+        else if (value > node.value)
+            node.right = insert(node.right, value);
+        else
+            System.out.println("Duplicate node " + value + " discarded.");
+        return node;
+    }
+
+    // DELETE node from BST using predecessor/successor
+    public static Node delete(Node node, int value) {
+        if (node == null) {
+            System.out.println("Value not found.");
+        return null;
+    }
+
+    if (value < node.value)
+        node.left = delete(node.left, value);
+    else if (value > node.value)
+        node.right = delete(node.right, value);
+    else {
+        // Node found
+        if (node.left == null && node.right == null) {
+        // Terminal node
+        return null;
+    } else if (node.left != null) {
+        // Non-terminal, has left child -> use predecessor
+        Node pred = node.left;
+        while (pred.right != null)
+            pred = pred.right;
+        node.value = pred.value;
+        node.left = delete(node.left, pred.value);
+    } else if (node.right != null) {
+        // Non-terminal, no left child -> use successor
+            Node succ = node.right;
+            while (succ.left != null)
+                succ = succ.left;
+            node.value = succ.value;
+            node.right = delete(node.right, succ.value);
+            }
+        }
+    return node;
+    }
+
+    // BUILD ARRAY representation of BST
+    static int[] buildArray(Node node) {
+        int size = 100; // maximum array size
+        int[] arr = new int[size];
+        Arrays.fill(arr, 0); // empty nodes = 0
+        maxIndex = 0;
+        fillArray(node, arr, 0);
+        int k = (int) (Math.log(maxIndex + 1) / Math.log(2)) + 1;
+        int finalSize = (int) Math.pow(2, k) - 1;
+        return Arrays.copyOf(arr, finalSize);
+    }
+
     static int maxIndex = 0;
 
-    // check duplicate
-    public static boolean exists(double value) {
-        for (int i = 0; i <= maxIndex; i++) {
-            if (tree[i] == value) return true;
-        }
-        return false;
+    static void fillArray(Node node, int[] arr, int index) {
+        if (node == null || index >= arr.length) return;
+            arr[index] = node.value;
+        if (index > maxIndex) maxIndex = index;
+            fillArray(node.left, arr, 2 * index + 1);
+        fillArray(node.right, arr, 2 * index + 2);
     }
 
-    // insert BST
-    public static void insert(double value, int index) {
-
-        if (index >= tree.length) {
-            System.out.println("Tree is full.");
-            return;
+    // FIND INDEX in array
+    public static int findIndex(int value, int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == value) return i;
         }
-
-        if (tree[index] == 0) {
-            tree[index] = value;
-
-            if (index > maxIndex)
-                maxIndex = index;
-
-            return;
-        }
-
-        if (value < tree[index]) {
-            insert(value, 2 * index + 1);
-        }
-
-        else if (value > tree[index]) {
-            insert(value, 2 * index + 2);
-        }
+        return -1;
     }
 
-    // remove node
-    public static void remove(double value) {
-
-        if (value == 0) {
-            System.out.println("Invalid: cannot remove empty node.");
-            return;
-        }
-
-        int index = -1;
-
-        for (int i = 0; i <= maxIndex; i++) {
-            if (tree[i] == value) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index == -1) {
-            System.out.println("Invalid: value not found.");
-            return;
-        }
-
-        int left = 2 * index + 1;
-        int right = 2 * index + 2;
-
-        boolean hasLeft = left <= maxIndex && tree[left] != 0;
-        boolean hasRight = right <= maxIndex && tree[right] != 0;
-
-        if (hasLeft || hasRight) {
-            System.out.println("Invalid: node has child nodes.");
-            return;
-        }
-
-        tree[index] = 0;
-        System.out.println("Node removed successfully.");
-    }
-
-    // replace node
-    public static void replace(double target, double newValue) {
-
-    if (target == 0) {
-        System.out.println("Invalid: cannot replace empty node.");
-        return;
-    }
-
-    int index = -1;
-
-    for (int i = 0; i <= maxIndex; i++) {
-        if (tree[i] == target) {
-            index = i;
-            break;
-        }
-    }
-
-    if (index == -1) {
-        System.out.println("Invalid: target node not found.");
-        return;
-    }
-
-    if (exists(newValue)) {
-        System.out.println("Invalid: duplicate value.");
-        return;
-    }
-
-    // CHECK PARENT RULE
-    if (index != 0) {
-
-        int parent = (index - 1) / 2;
-
-        if (index == 2 * parent + 1) { // left child
-            if (newValue >= tree[parent]) {
-                System.out.println("Invalid: left child must be less than parent.");
-                return;
-            }
-        }
-
-        if (index == 2 * parent + 2) { // right child
-            if (newValue <= tree[parent]) {
-                System.out.println("Invalid: right child must be greater than parent.");
-                return;
-            }
-        }
-    }
-
-    // CHECK CHILDREN
-    int left = 2 * index + 1;
-    int right = 2 * index + 2;
-
-    if (left <= maxIndex && tree[left] != 0 && newValue <= tree[left]) {
-        System.out.println("Invalid: must be greater than left child.");
-        return;
-    }
-
-    if (right <= maxIndex && tree[right] != 0 && newValue >= tree[right]) {
-        System.out.println("Invalid: must be less than right child.");
-        return;
-    }
-
-    tree[index] = newValue;
-
-    System.out.println("Node replaced successfully.");
-}
-
-    // compute tree size
-    public static int getTreeSize() {
-
-        int k = (int)(Math.log(maxIndex + 1) / Math.log(2)) + 1;
-
-        return (int)Math.pow(2, k) - 1;
-    }
-
-    // find element
-    public static void find(double value) {
-
-        for (int i = 0; i <= maxIndex; i++) {
-
-            if (tree[i] == value) {
-
-                System.out.println("Element found at index: " + i);
-                System.out.println("Array size: " + getTreeSize());
-                return;
-            }
-        }
-
-        System.out.println("Element not found.");
-    }
-
-    // print tree
-    public static void printTree() {
-
-        int size = getTreeSize();
-
+    // PRINT TREE ARRAY
+    public static void printTree(int[] arr) {
         System.out.print("TREE = {");
-
-        for (int i = 0; i < size; i++) {
-
-            if (tree[i] == (int)tree[i])
-                System.out.print((int)tree[i]);
-            else
-                System.out.print(tree[i]);
-
-            if (i < size - 1)
-                System.out.print(",");
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i]);
+            if (i < arr.length - 1) System.out.print(",");
         }
-
         System.out.println("}");
     }
 
-    // menu
-    public static void menu() {
-
-        System.out.println();
-        System.out.println("[A] ADD NODE");
-        System.out.println("[B] REMOVE NODE");
-        System.out.println("[C] REPLACE NODE");
-        System.out.println("[D] FIND ELEMENT");
-        System.out.println("[E] EXIT");
-    }
-
     public static void main(String[] args) {
-
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("ENTER ROOT: ");
-        double root = sc.nextDouble();
-        sc.nextLine();
+        while (true) {
+            System.out.println("\n1. insert");
+            System.out.println("2. delete");
+            System.out.println("3. end");
+            System.out.print("enter your choice: ");
+            String choice = sc.nextLine();
 
-        insert(root,0);
-
-        System.out.println("\nROOT = " + root);
-        printTree();
-
-        while(true) {
-
-            menu();
-
-            System.out.print("ENTER CHOICE: ");
-            String choice = sc.nextLine().toUpperCase();
-
-            switch(choice) {
-
-                case "A":
-
-                    System.out.print("ENTER VALUE(S) separated by comma: ");
-
+            // INPUT
+            if (choice.equals("insert")) {
+                while (true) {
+                    System.out.print("\ninput nodes(if many, separated by comma, type e to exit): ");
                     String input = sc.nextLine();
-
-                    String[] values = input.split(",");
-
-                    for(String v : values) {
-
-                        try {
-
-                            double val = Double.parseDouble(v.trim());
-
-                            if(exists(val)) {
-                                System.out.println("Duplicate value skipped: " + val);
-                                continue;
-                            }
-
-                            insert(val,0);
-
-                        } catch(Exception e) {
-
-                            System.out.println("Invalid input skipped: " + v);
+                        if (input.equalsIgnoreCase("e")) break;
+                    try {
+                        String[] nums = input.split(",");
+                        for (String n : nums) {
+                            int value = Integer.parseInt(n.trim());
+                            root = insert(root, value);
                         }
+                        int[] arr = buildArray(root);
+                        printTree(arr);
+                    } catch (Exception e) {
+                        System.out.println("Invalid input.");
                     }
+                }
+            }
 
-                    printTree();
-                    break;
+            // DELETE
+            else if (choice.equals("delete")) {
+                while (true) {
+                    System.out.print("\ndelete node(if many, separated by comma, type e to exit): ");
+                    String input = sc.nextLine();
+                    if (input.equalsIgnoreCase("e")) break;
+                    try {
+                        String[] nums = input.split(",");
+                        for (String n : nums) {
+                            int value = Integer.parseInt(n.trim());
+                            root = delete(root, value);
+                        }
+                        int[] arr = buildArray(root);
+                        printTree(arr);
+                    } catch (Exception e) {
+                        System.out.println("Invalid input.");
+                    }
+                }
+            }
 
-                case "B":
+            // PRINT + SEARCH
+            else if (choice.equals("end")) {
+                int[] arr = buildArray(root);
+                printTree(arr);
 
-                    System.out.print("ENTER VALUE: ");
-                    double del = sc.nextDouble();
-                    sc.nextLine();
+                    
+                break;
+            }
 
-                    remove(del);
-                    printTree();
-                    break;
-
-                case "C":
-
-                    System.out.print("TARGET NODE: ");
-                    double target = sc.nextDouble();
-
-                    System.out.print("REPLACE WITH: ");
-                    double rep = sc.nextDouble();
-                    sc.nextLine();
-
-                    replace(target,rep);
-                    printTree();
-                    break;
-
-                case "D":
-
-                    System.out.print("ENTER VALUE TO FIND: ");
-                    double find = sc.nextDouble();
-                    sc.nextLine();
-
-                    find(find);
-                    break;
-
-                case "E":
-
-                    System.out.println("\nFINAL TREE:");
-                    printTree();
-                    return;
-
-                default:
-                    System.out.println("Invalid menu option.");
+            else {
+                System.out.println("Invalid choice.");
             }
         }
+
+        sc.close();
     }
 }
