@@ -1,8 +1,47 @@
 package org.yourcompany.AVL;
 
-import java.util.Scanner;
+import java.util.*;
 class AVLTree
 {
+    void printArrayRepresentation()
+    {
+        if (Root == null)
+        {
+            System.out.println("Tree is empty");
+            return;
+        }
+
+        ArrayList<Integer> result = new ArrayList<>();
+        Queue<Node> queue = new LinkedList<>();
+
+        queue.add(Root);
+
+        while (!queue.isEmpty())
+        {
+            Node current = queue.poll();
+
+            if (current == null)
+            {
+                result.add(0); // placeholder for missing node
+            }
+            else
+            {
+                result.add(current.value);
+                queue.add(current.left);
+                queue.add(current.right);
+            }
+        }
+
+        // Remove trailing zeros (optional cleanup)
+        int i = result.size() - 1;
+        while (i >= 0 && result.get(i) == 0)
+            i--;
+
+        System.out.print("AVL TREE: ");
+        for (int j = 0; j <= i; j++)
+            System.out.print(result.get(j) + " ");
+        System.out.println();
+    }
     // NODE structure
     class Node
     {
@@ -296,6 +335,8 @@ public class AVLT
                 }
             }
             if(choice == 4) {
+                System.out.println("\n===============================================");
+                tree.printArrayRepresentation();
                 System.out.println("\nPreOrder Traversal :");
                 tree.PreOrder(tree.Root);
                 System.out.println("\nInOrder Traversal :");
