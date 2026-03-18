@@ -1,6 +1,6 @@
 public class InheritanceConstructor{
     public static void main(String[] args){
-        Animal dog = new Animal(7, 30, "brown", 4, true);
+        Carnivore dog = new Carnivore(7, 30, "brown", 4, true);
     }
 }
 
