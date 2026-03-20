@@ -1,46 +1,46 @@
 package org.yourcompany.AVL;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Scanner;
 class AVLTree
 {
-    void printArrayRepresentation()
-    {
-        if (Root == null)
-        {
-            System.out.println("Tree is empty");
-            return;
+    int[] buildArray(Node node) {
+        int size = 100; // maximum array size
+        int[] arr = new int[size];
+        Arrays.fill(arr, 0); // empty nodes = 0
+        maxIndex = 0;
+        fillArray(node, arr, 0);
+        int k = (int) (Math.log(maxIndex + 1) / Math.log(2)) + 1;
+        int finalSize = (int) Math.pow(2, k) - 1;
+        return Arrays.copyOf(arr, finalSize);
+    }
+
+    static int maxIndex = 0;
+
+    void fillArray(Node node, int[] arr, int index) {
+        if (node == null || index >= arr.length) return;
+            arr[index] = node.value;
+        if (index > maxIndex) maxIndex = index;
+            fillArray(node.left, arr, 2 * index + 1);
+        fillArray(node.right, arr, 2 * index + 2);
+    }
+
+    // FIND INDEX in array
+    public int findIndex(int value, int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == value) return i;
         }
+        return -1;
+    }
 
-        ArrayList<Integer> result = new ArrayList<>();
-        Queue<Node> queue = new LinkedList<>();
-
-        queue.add(Root);
-
-        while (!queue.isEmpty())
-        {
-            Node current = queue.poll();
-
-            if (current == null)
-            {
-                result.add(0); // placeholder for missing node
-            }
-            else
-            {
-                result.add(current.value);
-                queue.add(current.left);
-                queue.add(current.right);
-            }
+    // PRINT TREE ARRAY
+    public void printTree(int[] arr) {
+        System.out.print("TREE = {");
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i]);
+            if (i < arr.length - 1) System.out.print(",");
         }
-
-        // Remove trailing zeros (optional cleanup)
-        int i = result.size() - 1;
-        while (i >= 0 && result.get(i) == 0)
-            i--;
-
-        System.out.print("AVL TREE: ");
-        for (int j = 0; j <= i; j++)
-            System.out.print(result.get(j) + " ");
-        System.out.println();
+        System.out.println("}");
     }
     // NODE structure
     class Node
@@ -170,51 +170,66 @@ class AVLTree
         return balanceTree(root);
     }
 
-    // Successor returns the next largest node
-    Node Successor(Node root)
-    {
-        if (root.left != null)
-            return Successor(root.left);
+    public Node delete(Node node, int value) {
+        if (node == null) {
+            System.out.println("Value not found.");
+            return null;
+        }
 
-        else
-            return root;
-    }
+        // 🔹 STEP 1: Normal BST deletion
+        if (value < node.value)
+            node.left = delete(node.left, value);
 
+        else if (value > node.value)
+            node.right = delete(node.right, value);
 
-    Node Remove(Node root, int key)
-    {
-        // Performs standard BST Deletion
-        if (root == null)
-            return root;
+        else {
+            // Node found
+            if (node.left == null && node.right == null) {
+                return null;
+            } 
+            else if (node.left != null) {
+                // Use predecessor
+                Node pred = node.left;
+                while (pred.right != null)
+                    pred = pred.right;
 
-        else if (key < root.value)
-            root.left = Remove(root.left, key);
+                node.value = pred.value;
+                node.left = delete(node.left, pred.value);
+            } 
+            else {
+                // Use successor
+                Node succ = node.right;
+                while (succ.left != null)
+                    succ = succ.left;
 
-        else if (key > root.value)
-            root.right = Remove(root.right, key);
-
-        else
-        {
-            if (root.right == null)
-                root = root.left;
-
-            else if (root.left == null)
-                root = root.right;
-
-            else
-            {
-                Node temp = Successor(root.right);
-                root.value = temp.value;
-                root.right = Remove(root.right, root.value);
+                node.value = succ.value;
+                node.right = delete(node.right, succ.value);
             }
         }
 
-        if (root == null)
-            return root;
+        
+        updateHeight(node);
 
-        else
-            // Balances the tree after deletion
-            return balanceTree(root);
+        
+        int balance = Balance(node);
+
+        if (balance < -1) {
+            if (Balance(node.left) > 0) { // LR
+                node.left = rotateLeft(node.left);
+            }
+            return rotateRight(node); // LL
+        }
+
+        // Right heavy
+        if (balance > 1) {
+            if (Balance(node.right) < 0) { // RL
+                node.right = rotateRight(node.right);
+            }
+            return rotateLeft(node); // RR
+        }
+
+        return node;
     }
 
     // findNode is used to search for a particular value given the root
@@ -249,19 +264,6 @@ class AVLTree
             return 0;
         else
             return 1;
-    }
-
-    // Utility function for deletion of node
-    void delete(int key)
-    {
-        if (findNode(Root , key) != null)
-        {
-            Root = Remove(Root , key);
-            System.out.println("\nDeletion successful ");
-        }
-
-        else
-            System.out.println("\nNo node with entered value found in tree");
     }
 
     void InOrder(Node root)
@@ -336,7 +338,7 @@ public class AVLT
             }
             if(choice == 4) {
                 System.out.println("\n===============================================");
-                tree.printArrayRepresentation();
+                tree.printTree(tree.buildArray(tree.Root));
                 System.out.println("\nPreOrder Traversal :");
                 tree.PreOrder(tree.Root);
                 System.out.println("\nInOrder Traversal :");
@@ -366,7 +368,7 @@ public class AVLT
                 {
                     System.out.println("Enter the element to be deleted:");
                     int temp = scan.nextInt();
-                    tree.delete(temp);
+                    tree.delete(tree.Root, temp);
                     System.out.println("\nInOrder Traversal :");
                     tree.InOrder(tree.Root);
                     System.out.println("\nPreOrder Traversal :");
