@@ -24,7 +24,7 @@ public class Main{
             for(int i = 0; i < 2; i++){
                 num[i] = Integer.parseInt(inputs[i]);
             }
-            System.out.println("(" + userInput + ")");
+            System.out.println("Successfully entered: (" + userInput + ")");
 
             for(int value: num){
                 createVertex(value, graph);
@@ -34,8 +34,11 @@ public class Main{
 
         //Lowest or Highest Order Priority
         while(true){
+            System.out.println("\n================================");
             System.out.println("1. Lowest Order\n2. Highest Order");
-            String userOrder = scan.nextLine();
+            System.out.println("================================");
+            System.out.print("=> ");
+            String userOrder = scan.next();
             if(userOrder.equalsIgnoreCase("1")){
                 for(Vertex vertex: graph)
                     vertex.adj.sort(Comparator.comparing(Vertex::getValue));
@@ -51,7 +54,8 @@ public class Main{
         Vertex root;
         //Identify root
         while (true){
-            System.out.println("Enter root");
+            System.out.println("\nEnter root");
+            System.out.print("=> ");
             int userRoot = scan.nextInt();
             root = getVertex(userRoot, graph);
             if(root == null){
@@ -62,18 +66,22 @@ public class Main{
 
         ArrayList<Vertex> dfs = new ArrayList<>();
         dfs.add(root);
-        createDFS(root, dfs, graph);
+        ArrayList<Vertex> bfs = new ArrayList<>();
+        bfs.add(root);
+        createDFS(root, dfs);
+        createBFS(bfs, graph);
 
+        System.out.print("\nDFS: ");
         for(Vertex vertex: dfs)
-            System.out.println(vertex.value);
+            System.out.print(vertex.value + " ");
+        System.out.print("\nBFS: ");
+        for(Vertex vertex: bfs)
+            System.out.print(vertex.value + " ");
 
         scan.close();
     }
 
     static void createVertex(int value, ArrayList<Vertex> graph){
-
-        System.out.println(value);
-
         for(Vertex vertex: graph)
             if(vertex.value == value) return;
 
@@ -106,11 +114,21 @@ public class Main{
         return null;
     }
 
-    static void createDFS(Vertex root, ArrayList<Vertex> dfs, ArrayList<Vertex> graph){
+    static void createDFS(Vertex root, ArrayList<Vertex> dfs){
         for(Vertex vertex: root.adj){
             if(!dfs.contains(vertex)){
                 dfs.add(vertex);
-                createDFS(vertex, dfs, graph);
+                createDFS(vertex, dfs);
+            }
+        }
+    }
+
+    static void createBFS(ArrayList<Vertex> bfs, ArrayList<Vertex> graph){
+        for(int i = 0; bfs.size() < graph.size(); i ++){
+            for(Vertex vertex: bfs.get(i).adj){
+                if(!bfs.contains(vertex)){
+                    bfs.add(vertex);
+                }
             }
         }
     }
