@@ -1,0 +1,88 @@
+import java.util.*;
+
+public class AnimalAbstractionAben {
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        Animal[] animals = {new Dog(), 
+                            new Cat(), 
+                            new Mouse(), 
+                            new Horse(), 
+                            new Frog()
+        };
+        
+        while(true){
+            System.out.println("Enter an animal(DOG/CAT/MOUSE/HORSE/FROG)");
+            String userAnimal = scan.nextLine();
+
+            if(userAnimal.equalsIgnoreCase("Dog")){
+                Animal currentAnimal = animals[0];
+                currentAnimal.makeSound();
+                currentAnimal.eat();
+            } else if(userAnimal.equalsIgnoreCase("Cat")){
+                Animal currentAnimal = animals[1];
+                currentAnimal.makeSound();
+                currentAnimal.eat();
+            } else if(userAnimal.equalsIgnoreCase("Mouse")){
+                Animal currentAnimal = animals[2];
+                currentAnimal.makeSound();
+                currentAnimal.eat();
+            } else if(userAnimal.equalsIgnoreCase("Horse")){
+                Animal currentAnimal = animals[3];
+                currentAnimal.makeSound();
+                currentAnimal.eat();
+            } else if(userAnimal.equalsIgnoreCase("Frog")){
+                Animal currentAnimal = animals[4];
+                currentAnimal.makeSound();
+                currentAnimal.eat();
+            } else if(userAnimal.equalsIgnoreCase("Exit")){
+                break;
+            } else {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+}
+
+abstract class Animal{
+    public abstract void makeSound();
+    
+    public void eat(){
+        System.out.println("This animal eats food.");
+    }
+}
+
+class Dog extends Animal{
+    @Override
+    public void makeSound(){
+        System.out.println("The dog barks.");
+    }
+}
+
+class Cat extends Animal{
+    @Override
+    public void makeSound(){
+        System.out.println("The cat meows.");
+    }
+}
+
+class Mouse extends Animal{
+    @Override
+    public void makeSound(){
+        System.out.println("The mouse squeaks.");
+    }
+}
+
+class Horse extends Animal{
+    @Override
+    public void makeSound(){
+        System.out.println("The horse neighs.");
+    }
+}
+
+class Frog extends Animal{
+    @Override
+    public void makeSound(){
+        System.out.println("The frog croaks.");
+    }
+}
