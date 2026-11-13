@@ -1,0 +1,730 @@
+import java.util.*;
+
+public class SlayTheSpire{
+    public static Scanner sc = new Scanner(System.in);
+    public static Random rand = new Random();
+    public static int enemiesEncountered = 0;
+
+    public static void main(String[] args){
+    while(true){
+        System.out.println("================================");
+        System.out.println("\tSLAY THE SPIRE");
+        System.out.println("================================");
+        System.out.print("What is your name: ");
+        String userName = sc.nextLine();
+        System.out.println("WELCOME: " + userName);
+        load();
+
+        Entity hero = chooseHero();
+        hero.setName(userName);
+
+        //first fight
+        load();
+        Entity[] previousEnemy = new Entity[5];
+        Entity enemy = chooseBasicEnemy(previousEnemy);
+        Buff previousHeroBuff = null;
+        Buff previousEnemyBuff = null;
+
+        System.out.println("\nAs you take your first steps into the Spire, the air feels oddly familiar.");
+        System.out.println("The ground trembles slightly.");
+        System.out.println("A " + enemy.getName() + " crawls out from the shadows.");
+        System.out.println("You tighten your grip and prepare yourself.");
+        System.out.println("THE FIGHT BEGINS!!!");
+
+        boolean win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
+        levelUp(hero, enemy);
+        heroHeal(hero);
+
+        load();
+        //second fight
+        enemy = chooseBasicEnemy(previousEnemy);
+        previousHeroBuff = null;
+        previousEnemyBuff = null;
+
+        System.out.println("\nDeeper into the Spire, the walls begins to pulse with a strange life.");
+        System.out.println("A " + enemy.getName() + " stands in your path.");
+        System.out.println("At first it doesn't seem threatening, until you noticed that with every movement it survives,");
+        System.out.println("it grows stronger.");
+        System.out.println("You know one thing for sure: ");
+        System.out.println("IF YOU LET THIS DRAG ON, IT WILL OVERWHELM YOU.");
+
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
+        levelUp(hero, enemy);
+        heroHeal(hero);
+
+        load();
+        //3rd fight
+        enemy = chooseBasicEnemy(previousEnemy);
+        previousHeroBuff = null;
+        previousEnemyBuff = null;
+
+        System.out.println("\nThe path narrows and the Spire ultimately becomes quiet.");
+        System.out.println("Without warning, " + enemy.getName() + " provokes you.");
+        System.out.println("Each attack is precise.");
+        System.out.println("Every mistake is punished.");
+        System.out.println("Hesitate too long... choose the wrong move... ");
+        System.out.println("AND IT WILL MAKE YOU REGRET IT.");
+
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
+        levelUp(hero, enemy);
+
+        load();
+        //4th fight
+        enemy = chooseBasicEnemy(previousEnemy);
+        previousHeroBuff = null;
+        previousEnemyBuff = null;
+        heroHeal(hero);
+        System.out.println("\nFlickering lights surrounds you as whispers echo around the Spire.");
+        System.out.println("A " + enemy.getName() + " locks its eyes onto you.");
+        System.out.println("");
+
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
+        levelUp(hero, enemy);
+
+        load();
+        //boss fight
+        enemy = chooseBoss();
+        previousHeroBuff = null;
+        previousEnemyBuff = null;
+        
+        System.out.println("\nAt the peak of the Spire, the air becomes heavy.");
+        System.out.println("Every step forwards drags on.");
+        System.out.println("\nA figure stands before you.");
+        System.out.println("Calm and unbothered.");
+        System.out.println("\n" + enemy.getName() + " turns slowly to face you.");
+        System.out.println("Legend says he is ruthless.");
+        System.out.println("One small mistake, and you collapse.");
+        System.out.println("Yet, he does not seek to fail anyone.");
+        System.out.println("He longs for a worthy opponent.");
+        System.out.println("\nHe believes in one rule:");
+        System.out.println("AS LONG AS YOU COMPLETE ALL HIS REQUIREMENTS, YOU ARE WORTHY.");
+        System.out.println("The ground shakes as his presence fills the room.");
+        System.out.println("\nYou take a deep breath.");
+        System.out.println("This is the true test of endurance.");
+        System.out.println("THE FIGHT BEGINS.");
+
+        win = fight(hero, enemy, previousHeroBuff, previousEnemyBuff);
+        if(!win){
+            load();
+            System.out.println("\n---------Play Again?--------");
+            if(!confirmation()){
+                break;
+            } else {
+                continue;
+            }
+        }
+        levelUp(hero, enemy);
+
+        load();
+        //Ending
+        System.out.println("\nThe Spire falls silent.");
+        System.out.println("A defeated " + enemy.getName() + " looks at you one last time.");
+        System.out.println("There was no celebration.");
+        System.out.println("There was no applause.");
+        System.out.println("Just a slight nod.");
+        System.out.println("He says, \"You met all the requirements and your output is correct.\"");
+        System.out.println("He turns away already uninterested, this was never about him.");
+
+        System.out.println("\n========YOU PASSED========");
+        System.out.println("\n---------Play Again?--------");
+        if(!confirmation()){
+            break;
+        }
+    }
+}
+
+    static void levelUp(Entity hero, Entity enemy){
+        hero.addExp(enemy.getExp());
+        if(hero.getExp() >= 100){
+            System.out.println("--------YOU LEVELED UP!!!--------");
+            hero.addExp(-100);
+        }
+    }
+
+    static void heroHeal(Entity hero){
+        hero.addBlock((int) (hero.getMaxHealth() * 0.25));
+    }
+
+    static boolean fight(Entity hero, Entity enemy, Buff previousHeroBuff, Buff previousEnemyBuff){
+        while(true){
+            System.out.println("--------------------------------");
+            System.out.println(hero.getName() + ": " + hero.getHealth());
+            System.out.println(enemy.getName() + ": " + enemy.getHealth());
+
+            if(hero.getSpeed() > enemy.getSpeed()){
+                heroChooseSkill(hero);
+                int userAction = 0;
+                try {
+                    userAction = Integer.parseInt(sc.nextLine());
+                } catch(Exception e){
+                    System.out.println("---------Not A Skill!---------");
+                    continue;
+                }
+                if(userAction < 0 || userAction > 4){
+                    continue;
+                }
+                previousHeroBuff = turn(hero, enemy, userAction, previousHeroBuff);
+                
+                hero.setSpeed(0);
+                enemy.setSpeed(1);
+            } else{
+                int enemyAction = rand.nextInt(0, enemy.getJob().getSkills().length);
+                previousEnemyBuff = turn(enemy, hero, enemyAction, previousEnemyBuff);
+
+                hero.setSpeed(1);
+                enemy.setSpeed(0);
+            }
+
+            if(hero.getHealth()<= 0){
+                System.out.println("========YOU FAILED========");
+                return false;
+            } else if(enemy.getHealth() <= 0){
+                return true;
+            }
+            System.out.println("\n");
+        }
+    }
+
+    static void heroChooseSkill(Entity hero){
+        int i = 0;
+        System.out.println("--------------------------------");
+        for(Skill skill: hero.getJob().getSkills()){
+            System.out.println(i + " " + skill.getSkillName());
+            System.out.println("   > " + skill.getDescription());
+            i++;
+        }
+        System.out.println("--------------------------------");
+        System.out.print("==> ");
+    }
+
+    static Buff turn(Entity first, Entity second, int userAction, Buff previousBuff){
+        //Poison Buff
+        if (first.getPoison() > 0) {
+            first.takeDamage(first.getPoison());
+            System.out.println(first.getName() + " takes " + first.getPoison() + " poison damage!");
+            first.reducePoison();
+        }
+
+        //For Stacking Buffs
+        Buff buff = first.getJob().getSkills()[userAction].getBuff();
+        if (buff != null) {
+            buff = new Buff(buff);
+        }
+
+        if(userAction >= 0 && userAction < first.getJob().getSkills().length){
+            performSkill(first, second, userAction, buff, previousBuff);
+
+            System.out.println("--------" + first.getName() + " Used " +
+                first.getJob().getSkills()[userAction].getSkillName() + "!--------");
+
+            // If buff was used, return it otherwise keep the old one
+            if (buff != null) {
+                return buff;        //new buff applied
+            }
+            if (previousBuff != null && previousBuff.getIsEvoked()) {
+                return previousBuff; // still waiting to be used
+            }
+            return null;  
+        }
+
+        System.out.println("---------Not A Skill!---------");
+        return previousBuff;
+    }
+
+    static void performSkill(Entity first, Entity second, int action, Buff buff, Buff previousBuff){
+        int damage = first.getJob().getSkills()[action].getDamage();
+        first.setDamage(damage);
+
+        if (previousBuff != null && previousBuff.getIsEvoked()) {
+            if (previousBuff.getBuffName().equalsIgnoreCase("growth")) {
+                first.addDamage( previousBuff.getLevel() * previousBuff.getTimesCalled());
+            }
+        }
+
+        if (previousBuff != null && previousBuff.getIsEvoked()) {
+            if (previousBuff.getBuffName().equalsIgnoreCase("spores")) {
+                first.addDamage((int)(damage * 0.25));
+            }
+        }
+
+        if (buff != null && buff.getBuffName().equalsIgnoreCase("finisher")) {
+            if (second.getHealth() <= second.getMaxHealth() * 0.25) {
+                damage *= 2;
+                System.out.println("EXECUTE! Massive damage!");
+            }
+        }
+
+        // Apply stacked buff BEFORE attacking
+        if (buff != null) {
+            buff.applyBuff(first, second);
+        }
+
+        // Block should ALWAYS apply
+        first.addBlock(first.getJob().getSkills()[action].getBlock());
+
+        // Only deal damage if there is damage
+        if (damage > 0) {
+            second.takeDamage(first.getDamage());
+        }
+
+        if (previousBuff != null && previousBuff.getIsEvoked()) {
+            previousBuff.removeBuff(first, second);
+        }
+    }
+
+    static Entity chooseHero(){
+        Entity[] heroes = heroSetup();
+
+        while(true){
+            System.out.println("\n\tCHOOSE A HERO");
+            for (Entity hero : heroes) {
+                System.out.println(hero.getJob().getJobName());
+            }
+            System.out.println("--------------------------------");
+            System.out.print("==> ");
+            String heroChoice = sc.nextLine();
+
+            for(Entity hero: heroes){
+                if(heroChoice.equalsIgnoreCase(hero.getJob().getJobName())){
+                    hero.displayDetails();
+                    if(confirmation()){
+                        return hero;
+                    } else{
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    static Entity chooseBasicEnemy(Entity[] previousEnemy){
+        Entity[] enemies = basicEnemySetup();
+
+        while(true){
+            Entity basicEnemy = enemies[rand.nextInt(0, enemies.length)];
+            if(isAlreadyChosen(previousEnemy, basicEnemy) == false){
+                previousEnemy[enemiesEncountered] = basicEnemy;
+                enemiesEncountered++;
+                return basicEnemy;
+            }
+        }
+    }
+
+    static Entity chooseBoss(){
+        Entity[] bosses = bossSetup();
+        Entity boss = bosses[rand.nextInt(0, bosses.length)];
+        return boss;
+    }
+
+    static boolean isAlreadyChosen(Entity[] previousEnemy, Entity basicEnemy){
+        for(Entity enemy: previousEnemy){
+            if(basicEnemy == enemy){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static Entity[] heroSetup(){
+        Buff[] buffs = {
+            new Buff("Surge", 4),
+            new Buff("Empower", 1),
+            new Buff("Finisher", 1),
+            new Buff("Poison", 4)
+        };
+
+        Skill[] warriorSkills = {
+            new Skill("Strike","Deals 8 Damage",8, 0),
+            new Skill("Block", "Gain 7 Block", 0, 7),
+            new Skill("Bash", "Deals 6 Damage, Deal 25% more damage next turn",6,0, buffs[1]),
+            new Skill("Cleave", "Deal 15 Damage", 15, 0)
+        };
+        Skill[] archerSkills = {
+            new Skill("Quick Shot","Deal 9 Damage",9, 0),
+            new Skill("Evasive Roll", "Gain 10 block", 0, 10),
+            new Skill("Poisoned Arrow","Deals 4 Damage, Poisons enemy", 4, 0, buffs[3]),
+            new Skill("Roll Shot", "Deals 5 Damage, Gain 10 Block", 5, 10)
+        };
+        Skill[] mageSkills = {
+            new Skill("Firebolt","Deal 9 Damage",9, 0),
+            new Skill("Frost Armor","Deal 7 Damage, Deal 25% more Damage, Enemy deals 25% less Damage next turn", 0, 7, buffs[1]),
+            new Skill("Arcane Surge","Deal 6 Damage, Gain +4 Attack Damage (Can Stack, Lose All Stack after an Attack)", 6, 0, buffs[0]),
+            new Skill("Lightning Burst","Deal 14 Damage", 14, 0)
+        };
+        Skill[] assassinSkills = {
+            new Skill("Stab","Deal 7 Damage",7, 0),
+            new Skill("Smoke Bomb","Gain 8 Block", 0, 8),
+            new Skill("Poisoned Blade", "Deal 5 Damage, Poisons enemy",5, 0, buffs[2]),
+            new Skill("Execute","Deal 12 Damage, Deals twice the Damage if Enemy health is <25%", 12, 0, buffs[3]) 
+        };
+
+        Job[] heroes = {
+            new Job("Warrior", warriorSkills),
+            new Job("Archer", archerSkills),
+            new Job("Mage", mageSkills),
+            new Job("Assassin", assassinSkills)
+        };
+        return new Entity[]{
+            new Entity(heroes[0], 80, 1),
+            new Entity(heroes[1], 75, 1),
+            new Entity(heroes[2], 50, 1),
+            new Entity(heroes[3], 70, 1)
+        };
+    }
+
+    static Entity[] basicEnemySetup(){
+        Buff[] buffs = {
+            new Buff("Growth", 8),
+            new Buff("Spores", 1),
+            new Buff("Poison", 8)
+        };
+
+        Skill[] jawWormSkills = {
+            new Skill("Basic Attack", 7, 0),
+            new Skill("Block", 0, 10)
+        };
+        Skill[] fungiBeastSkills = {
+            new Skill("Basic Attack", 9, 0),
+            new Skill("Growth", 0, 5, buffs[0])
+        };
+        Skill[] snakePlantSkills = {
+            new Skill("Chomp" , 10, 0),
+            new Skill("Spores", 0, 0, buffs[1])
+        };
+        Skill[] hexCultistSkills = {
+            new Skill("Bolt", 5, 1),
+            new Skill("Defense", 0, 15),
+            new Skill("Venom Chant", 2, 1, buffs[2]),
+            new Skill("Ritual Drain", 7, 7)
+        };
+
+        Job[] basicEnemies = {
+            new Job("Jaw Worm", jawWormSkills),
+            new Job("Fungi Beast", fungiBeastSkills),
+            new Job("Snake Plant", snakePlantSkills),
+            new Job("Hex Cultist", hexCultistSkills)
+        };
+
+        return new Entity[]{
+            new Entity("Jaw Worm", basicEnemies[0], 40, 0, 40),
+            new Entity("Fungi Beast", basicEnemies[1], 70, 0, 50),
+            new Entity("Snake Plant", basicEnemies[2], 60, 0, 50),
+            new Entity("Hex Cultist", basicEnemies[3], 40, 0, 100)
+        };
+    }
+
+    static Entity[] bossSetup(){
+        Buff[] buffs = {
+            new Buff("Growth", 10),
+            new Buff("Finisher", 1),
+            new Buff("Poison", 12),
+        };
+
+        Skill[] spireOverLordPSkills = {
+            new Skill("Obliterating Dyis", 14, 0),
+            new Skill("Wealth Barrier", 0, 20),
+            new Skill("One-Fourth Trauma", 6, 0, buffs[2]),
+            new Skill("Aura", 0, 0, buffs[0]),
+            new Skill("Final Judgement", 18, 0, buffs[1])
+        };
+
+        Job[] bosses = {
+            new Job("Spire OverLord P", spireOverLordPSkills),
+        };
+
+        return new Entity[]{
+            new Entity("Spire OverLord P", bosses[0], 150, 0, 500)
+        };
+    }
+
+    static boolean confirmation(){
+        while(true){
+            System.out.println("\n---------Confirm? (Y/N)---------");
+            String confirmation = sc.nextLine();
+            if(confirmation.equalsIgnoreCase("Y")){
+                return true;
+            } else if(confirmation.equalsIgnoreCase("N")){
+                return false;
+            }
+        }
+    }
+
+    static void load(){
+        for(int i = 0; i < 16; i++){
+            System.out.print(". ");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
+    }
+}
+
+class Entity{
+    private String name;
+    private Job job;
+    private int health;
+    private int damage;
+    private int speed;
+    private int exp;
+    private int maxHealth;
+    private int poison;
+
+    Entity(Job job, int health, int speed){
+        this.job = job;
+        this.health = health;
+        this.speed = speed;
+        this.maxHealth = health;
+    }
+    Entity(String name, Job job, int health, int speed, int exp){
+        this.name = name;
+        this.job = job;
+        this.health = health;
+        this.speed = speed;
+        this.exp = exp;
+        this.maxHealth = health;
+    }
+
+    String getName(){
+        return this.name;
+    }
+    Job getJob(){
+        return this.job;
+    }
+    int getHealth(){
+        return this.health;
+    }
+    int getDamage(){
+        return this.damage;
+    }
+    int getSpeed(){
+        return this.speed;
+    }
+    int getExp(){
+        return this.exp;
+    }
+    int getMaxHealth(){
+        return this.maxHealth;
+    }
+    int getPoison() {
+    return poison;
+}
+
+    void setName(String name){
+        this.name = name;
+    }
+    void setDamage(int damage){
+        this.damage = damage;
+    }
+    void setSpeed(int speed){
+        this.speed = speed;
+    }
+
+    void addDamage(int damage){
+        this.damage += damage;
+    }
+    void addBlock(int block){
+        this.health += block;
+    }
+    void addExp(int exp){
+        this.exp += exp;
+    }
+    void addPoison(int amount) {
+        poison += amount;
+    }
+
+    void reducePoison() {
+        if (poison > 0) poison--;
+    }
+
+    void takeDamage(int damage){
+        this.health -= damage;
+    }
+
+    void displayDetails(){
+        System.out.println("Hero: " + getJob().getJobName());
+        System.out.println("Health: " + getHealth());
+        System.out.print("Skills: \n");
+        int i = 0;
+        for(Skill skill: getJob().getSkills()){
+            System.out.println(i + " " + skill.getSkillName());
+            System.out.println("   > " + skill.getDescription());
+            i++;
+        }
+    }
+}
+
+class Job{
+    private String jobName;
+    private Skill[] skills;
+
+    Job(String jobName, Skill[] skills){
+        this.jobName = jobName;
+        this.skills = skills;
+    }
+
+    String getJobName(){
+        return this.jobName;
+    }
+    Skill[] getSkills(){
+        return this.skills;
+    }
+}
+
+class Skill{
+    private String skillName;
+    private int damage;
+    private int block;
+    private Buff buff;
+    private String description;
+
+    Skill(String skillName, int damage, int block, Buff buff){
+        this.skillName = skillName;
+        this.damage = damage;
+        this.block = block;
+        this.buff = buff;
+    }
+    Skill(String skillName, int damage, int block){
+        this.skillName = skillName;
+        this.damage = damage;
+        this.block = block;
+    }
+    Skill(String skillName, String description, int damage, int block, Buff buff){
+        this.skillName = skillName;
+        this.description = description;
+        this.damage = damage;
+        this.block = block;
+        this.buff = buff;
+    }
+
+    Skill(String skillName, String description, int damage, int block){
+        this.skillName = skillName;
+        this.description = description;
+        this.damage = damage;
+        this.block = block;
+    }
+
+    String getSkillName(){
+        return this.skillName;
+    }
+    int getDamage(){
+        return this.damage;
+    }
+    int getBlock(){
+        return this.block;
+    }
+    Buff getBuff(){
+        return this.buff;
+    }
+    String getDescription(){
+        return this.description;
+    }
+}
+
+class Buff{
+    private String buffName;
+    private int level;
+    private int timesCalled;
+    private int firstDamage;
+    private int secondDamage;
+    private boolean isEvoked = false;
+
+    Buff(String buffName, int level) {
+        this.buffName = buffName;
+        this.level = level;
+    }
+    Buff(Buff other){
+        this.buffName = other.buffName;
+        this.level = other.level;
+    }
+
+    String getBuffName(){
+        return this.buffName;
+    }
+    int getLevel(){
+        return this.level;
+    }
+    int getTimesCalled(){
+        return this.timesCalled;
+    }
+    boolean getIsEvoked(){
+        return this.isEvoked;
+    }
+
+    void applyBuff(Entity first, Entity second){
+        if(buffName.equalsIgnoreCase("growth")|| buffName.equalsIgnoreCase("surge")){
+            this.timesCalled = 1;
+            this.isEvoked = true;
+        } 
+        if(buffName.equalsIgnoreCase("spores")|| buffName.equalsIgnoreCase("empower")){
+            this.firstDamage = (int) (first.getDamage()*0.25);
+            this.secondDamage = (int) (second.getDamage()*0.25);
+
+            first.addDamage(this.firstDamage);
+            second.addDamage(-this.secondDamage);
+            this.isEvoked = true;
+        }
+        if (buffName.equalsIgnoreCase("poison")) {
+            second.addPoison(this.level);
+            this.isEvoked = true;
+        }
+    }
+
+    void removeBuff(Entity first, Entity second){
+        if(!this.isEvoked) return;
+
+        if(buffName.equalsIgnoreCase("growth") || buffName.equalsIgnoreCase("surge")){
+            first.addDamage(this.level * -1 * this.timesCalled);
+            this.isEvoked = false;
+            this.timesCalled = 0;
+        }
+        
+        if(buffName.equalsIgnoreCase("spores")|| buffName.equalsIgnoreCase("empower")){
+            first.addDamage(-this.firstDamage);
+            second.addDamage(this.secondDamage);
+            this.isEvoked = false;
+        }
+
+        if (buffName.equalsIgnoreCase("poison")) {
+            this.isEvoked = false;
+        }
+
+    }
+}

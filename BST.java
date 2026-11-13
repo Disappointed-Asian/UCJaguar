@@ -145,7 +145,7 @@ public class BST {
     }
 }
 
-class Node{
+private class Node{
     int value;
     Node leftChild = null;
     Node rightChild = null;

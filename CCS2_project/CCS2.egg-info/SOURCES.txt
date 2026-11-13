@@ -1,0 +1,10 @@
+dev-requirements.txt
+pyproject.toml
+CCS2/__init__.py
+CCS2/__main__.py
+CCS2.egg-info/PKG-INFO
+CCS2.egg-info/SOURCES.txt
+CCS2.egg-info/dependency_links.txt
+CCS2.egg-info/requires.txt
+CCS2.egg-info/top_level.txt
+tests/test_CCS2.py

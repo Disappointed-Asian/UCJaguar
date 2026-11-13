@@ -1,5 +1,3 @@
-package labactivity.infixconverter;
-
 import java.util.*;
 
 public class InfixConverter {

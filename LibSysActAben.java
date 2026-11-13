@@ -1,0 +1,136 @@
+import java.util.*;
+
+class Book{
+    String title;
+    String author;
+    boolean isAvailable;
+    
+    Book(String title, String author){
+        this.title = title;
+        this.author = author;
+        this.isAvailable = true;
+    }
+
+    void displayBookDetails(){
+        System.out.println("-------------------------------------------");
+        System.out.println("Title of Book: " + title);
+        System.out.println("Author of Book: " + author);
+        System.out.println("Available: " + isAvailable);
+        System.out.println("--------------------------------------------");
+    }
+
+    void borrowBook(){
+        if(isAvailable){
+            isAvailable = false;
+            System.out.println("\n--------Book borrowed.--------");
+        } else{
+            System.out.println("\n--------Book not available.--------");
+        }
+    }
+
+    void returnBook(){
+        if(!isAvailable){
+            isAvailable = true;
+            System.out.println("\n--------Book returned.--------");
+        } else{
+            System.out.println("\n--------Book already returned.--------");
+        }
+    }
+}
+
+class Library{
+    ArrayList<Book> books;
+
+    Library(ArrayList<Book> books){
+        this.books = books;
+    }
+
+    void addBook(Book book){
+        books.add(book);
+    }
+
+    void displayAllBooks(){
+        for(Book currentBook: books){
+            currentBook.displayBookDetails();
+        }
+    }
+
+    void searchBookByTitle(String title){
+        for(Book currentBook: books){
+            if(currentBook.title.equalsIgnoreCase(title)){
+                currentBook.displayBookDetails();
+                return;
+            }
+        }
+        System.out.println("\n--------Book not found.--------");
+    }
+
+    void findBook(String userInput, String bookTitle){
+        for(Book book: books){
+            if(book.title.equalsIgnoreCase(bookTitle)){
+                if(userInput.equalsIgnoreCase("borrow")){
+                    book.borrowBook();
+                    return;
+                }
+                else if(userInput.equalsIgnoreCase("return")){
+                    book.returnBook();
+                    return;
+                }
+            }
+        }
+        System.out.println("\n--------Book not found.--------");
+    }
+}
+
+public class LibSysActAben {
+    public static void main(String[] args) {
+        //Creates the library
+        Library lib = new Library(new ArrayList<>());
+        Book b1 = new Book("The Biggest Defeat", "GKat");
+        Book b2 = new Book("The Great Dhelly", "Dhell Mar");
+        Book b3 = new Book("Elden Ring", "Jacob");
+
+        lib.addBook(b1);
+        lib.addBook(b2);
+        lib.addBook(b3);
+
+        //Displays the library
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("\n\n============================================");
+        System.out.println("Welcome to Janelle's Library");
+        System.out.println("============================================");
+        
+        lib.displayAllBooks();
+
+        while(true){
+            //Asks the user to either borrow, return, search, or exit the library
+            System.out.println("\n\nType Borrow/Return/Search to Borrow/Return/Search a book.");
+            System.out.println("Type Exit to exit.");
+            System.out.println("============================================");
+            String userInput = sc.nextLine();
+
+            //For exiting the library
+            if(userInput.equalsIgnoreCase("exit")){
+                System.out.println("\n\nEXITING LIBRARY....\n\n");
+                break;
+            }
+
+            //For searching a book
+            if(userInput.equalsIgnoreCase("search")){
+                System.out.print("Type book title: ");
+                String bookTitle = sc.nextLine();
+                lib.searchBookByTitle(bookTitle);
+                continue;
+            }
+
+            //For returning and borrowing a book
+            if(userInput.equalsIgnoreCase("borrow") || userInput.equalsIgnoreCase("return")){
+                System.out.print("Type book title: ");
+                String bookTitle = sc.nextLine();
+                lib.findBook(userInput, bookTitle);
+            }
+        }
+        sc.close();
+    }
+}
